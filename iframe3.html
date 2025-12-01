@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Payment IFrame</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617, #000000);
+      color: #e5e7eb;
+    }
+    h3 {
+      margin-top: 0;
+      font-size: 17px;
+    }
+    p.helper {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+    label {
+      font-size: 13px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 7px 9px;
+      font-size: 13px;
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      box-sizing: border-box;
+    }
+    .field {
+      margin-bottom: 10px;
+    }
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: linear-gradient(to right, #22c55e, #14b8a6);
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 6px 18px rgba(34,197,94,0.45);
+      margin-top: 6px;
+    }
+    button:hover {
+      filter: brightness(1.06);
+    }
+    .status {
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+    .status.ok {
+      color: #bbf7d0;
+    }
+    .status.error {
+      color: #fecaca;
+    }
+  </style>
+</head>
+<body>
+  <h3>Test payment panel</h3>
+  <p class="helper">This iframe is inside a <strong>shadow root</strong> on the parent page. Reach it via the custom element and then switch into this frame.</p>
+
+  <div class="field">
+    <label for="phone">Phone number</label>
+    <input id="phone" type="text" placeholder="Enter a test phone number" />
+  </div>
+
+  <div class="field">
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" min="1" placeholder="100" />
+  </div>
+
+  <div class="field">
+    <label for="method">Payment method</label>
+    <select id="method">
+      <option value="card">Card</option>
+      <option value="upi">UPI</option>
+      <option value="wallet">Wallet</option>
+    </select>
+  </div>
+
+  <button id="payNow">Pay now (simulation)</button>
+  <div id="payStatus" class="status"></div>
+
+  <script>
+    const phone = document.getElementById('phone');
+    const amount = document.getElementById('amount');
+    const method = document.getElementById('method');
+    const status = document.getElementById('payStatus');
+    const btn = document.getElementById('payNow');
+
+    btn.addEventListener('click', () => {
+      status.className = 'status';
+      const phoneVal = phone.value.trim();
+      const amountVal = parseFloat(amount.value);
+
+      if (!phoneVal || phoneVal.replace(/\D/g, '').length < 10) {
+        status.textContent = 'Please enter a valid phone number (at least 10 digits).';
+        status.classList.add('error');
+        return;
+      }
+      if (!amountVal || amountVal <= 0) {
+        status.textContent = 'Please enter a positive amount.';
+        status.classList.add('error');
+        return;
+      }
+
+      status.textContent = `Payment simulation successful: ${amountVal.toFixed(2)} via ${method.value.toUpperCase()} for ${phoneVal}.`;
+      status.classList.add('ok');
+    });
+  </script>
+</body>
+</html>

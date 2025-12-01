@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Selenium IFrame & Shadow DOM Playground</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f172a, #111827);
+      color: #e5e7eb;
+    }
+    header {
+      padding: 20px 32px;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+    h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+    header p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+    main {
+      max-width: 1200px;
+      margin: 16px auto 40px;
+      padding: 0 16px 40px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    button.jump {
+      border-radius: 9999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.8);
+      color: #e5e7eb;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    button.jump span.icon {
+      font-size: 15px;
+    }
+    button.jump:hover {
+      background: #1f2937;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(16,185,129,0.25), transparent 55%),
+                  rgba(15, 23, 42, 0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 14px 14px 18px;
+      box-shadow: 0 16px 40px rgba(15,23,42,0.7);
+      position: relative;
+      overflow: hidden;
+    }
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 18px;
+    }
+    .card p {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: #cbd5f5;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      border: 1px solid rgba(96,165,250,0.6);
+      background: rgba(15,23,42,0.9);
+      color: #bfdbfe;
+      margin-bottom: 8px;
+    }
+    .badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+    iframe.demo {
+      width: 100%;
+      min-height: 260px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: #020617;
+      overflow: hidden;
+    }
+    .highlight-frame {
+      box-shadow: 0 0 0 2px #38bdf8, 0 0 25px rgba(56,189,248,0.85);
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+      transform: translateY(-2px);
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 32px;
+    }
+    footer code {
+      font-size: 12px;
+      background: rgba(15,23,42,0.9);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(55,65,81,0.7);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Selenium IFrame & Shadow DOM Playground</h1>
+    <p>Practice robust locators for iframe with ID, iframe without ID, and iframe inside a shadow root – all on one page.</p>
+  </header>
+
+  <main>
+    <section class="controls">
+      <button class="jump" onclick="focusFrame('frame-with-id')">
+        <span class="icon">🧑‍💻</span><span>Focus: Profile IFrame (ID)</span>
+      </button>
+      <button class="jump" onclick="focusFrame('frame-without-id')">
+        <span class="icon">💬</span><span>Focus: Feedback IFrame (no ID)</span>
+      </button>
+      <button class="jump" onclick="focusFrame('shadow-wrapper')">
+        <span class="icon">💳</span><span>Focus: Shadow DOM Payment IFrame</span>
+      </button>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="badge"><span class="dot"></span> iframe with <code>id="formFrameId"</code></div>
+        <h2>User Profile Form</h2>
+        <p>Stable iframe identified by ID. Inside, use labels like <strong>Email address</strong> and <strong>Display name</strong> instead of brittle attributes.</p>
+        <iframe id="frame-with-id" class="demo" src="iframe1.html"></iframe>
+      </article>
+
+      <article class="card">
+        <div class="badge"><span class="dot"></span> iframe without <code>id</code></div>
+        <h2>Session Feedback Widget</h2>
+        <p>This iframe is intentionally missing an ID. Your test should locate it by searching all iframes for labels like <strong>How satisfied are you?</strong>.</p>
+        <iframe class="demo" src="iframe2.html"></iframe>
+      </article>
+
+      <article class="card">
+        <div class="badge"><span class="dot"></span> iframe inside <code>#shadow-root</code></div>
+        <h2>Payment Panel & Shadow DOM</h2>
+        <p>The iframe lives within a custom element’s shadow root. Use Selenium 4’s shadow DOM API to reach the <strong>Phone number</strong> and <strong>Amount</strong> fields.</p>
+        <div id="shadow-wrapper">
+          <payment-component></payment-component>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      Designed for <code>C# + Selenium</code> practice. Try finding elements by label text instead of fragile IDs or absolute XPaths.
+    </footer>
+  </main>
+
+  <script>
+    function focusFrame(id) {
+      // remove highlight from all
+      document.querySelectorAll('iframe.demo, #shadow-wrapper').forEach(el => {
+        el.classList.remove('highlight-frame');
+      });
+      const target = document.getElementById(id);
+      if (target) {
+        target.classList.add('highlight-frame');
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    class PaymentComponent extends HTMLElement {
+      constructor() {
+        super();
+        const shadow = this.attachShadow({ mode: "open" });
+
+        shadow.innerHTML = `
+          <style>
+            .frame-shell {
+              border-radius: 12px;
+              border: 1px solid rgba(148, 163, 184, 0.6);
+              padding: 4px;
+              background: radial-gradient(circle at top left, rgba(59,130,246,0.35), transparent 60%),
+                          rgba(15,23,42,0.95);
+            }
+            iframe {
+              width: 100%;
+              min-height: 260px;
+              border-radius: 10px;
+              border: none;
+              background: #020617;
+            }
+          </style>
+          <div class="frame-shell">
+            <iframe class="payment-frame" src="iframe3.html"></iframe>
+          </div>
+        `;
+      }
+    }
+    customElements.define("payment-component", PaymentComponent);
+  </script>
+</body>
+</html>
